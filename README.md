@@ -1,1 +1,1 @@
-# Software Innovation and Commercialisation Challenge
+# Software Innovation and Commercialisation Challenge (Authentication Concept)
