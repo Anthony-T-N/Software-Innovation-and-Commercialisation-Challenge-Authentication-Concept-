@@ -51,7 +51,7 @@ namespace Authentication_Logic_Concept____Innovation_Challenge_
         {
             Console.WriteLine("Initial Verification");
         }
-        public static string file_name_generator(bool use_file_ext)
+        public static string ---(bool ---)
         {
             return "!";
         }
