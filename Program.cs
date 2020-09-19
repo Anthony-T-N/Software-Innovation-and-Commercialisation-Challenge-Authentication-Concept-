@@ -19,6 +19,15 @@ namespace Authentication_Logic_Concept____Innovation_Challenge_
         }
         public void check_expiry(string store_item_code)
         {
+            if ((DateTime.Now - DateTime.Parse(store_item_code)).TotalMinutes <= 30)
+            {
+                Console.WriteLine("Valid");
+            }
+            else
+            {
+                Console.WriteLine("Invalid Code");
+            }
+            /*
             store_item_code = "2020-09-18 12:05:00";
             List<string> store_item_code_list = new List<string>()
             {
@@ -31,7 +40,7 @@ namespace Authentication_Logic_Concept____Innovation_Challenge_
             };
             List<string> date_time_key_list = new List<string>()
             {
-                "yyyy", "MM", "dd", "hh", "mm","ss"
+                "yyyy", "MM", "dd", "hh", "mm", "ss"
             };
             // Reads QR code or barcode to extract time/date and compares with current time/date to determine validity.
             Console.WriteLine("Check Expiry");
@@ -65,6 +74,7 @@ namespace Authentication_Logic_Concept____Innovation_Challenge_
                     Console.WriteLine("Invalid");
                 }
             }
+            */
             /*
             // Check for illegitimate time/dates.
             if (Int32.Parse(DateTime.Now.ToString("yyyy")) >= Int32.Parse(store_item_code.Substring(0, 4)))
