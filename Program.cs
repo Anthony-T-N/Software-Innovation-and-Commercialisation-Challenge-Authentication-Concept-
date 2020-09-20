@@ -7,25 +7,30 @@ namespace Authentication_Logic_Concept____Innovation_Challenge_
     {
         // Global Variables:
         string business_key = "-";
-        string access_point_name = "Business_Name";
+        static string access_point_name = "Business_Name";
         // Code made up of several elements. (Date and time).
-        static string store_item_code = DateTime.Now.ToString("yyyy-MM-dd h:mm:ss tt");
+        static string store_item_code = DateTime.Now.ToString("yyyy-MM-dd h:mm:ss tt") + "|" + access_point_name;
 
         static void Main(string[] args)
         {
             Program main_program = new Program();
             Console.WriteLine("Step 1:");
+            // Check whether the customer has purchased an item within 30mins.
             main_program.check_expiry(store_item_code);
+            // Verify that the item the customer purchased is from the same store providing wifi.
+            main_program.initial_verification(store_item_code);
         }
         public void check_expiry(string store_item_code)
         {
-            if ((DateTime.Now - DateTime.Parse(store_item_code)).TotalMinutes <= 30)
+            Console.WriteLine("Check Expiry");
+            if ((DateTime.Now - DateTime.Parse(store_item_code.Remove(store_item_code.LastIndexOf('|')))).TotalMinutes <= 30)
             {
                 Console.WriteLine("Valid");
             }
             else
             {
                 Console.WriteLine("Invalid Code");
+                System.Environment.Exit(0);
             }
             /*
             store_item_code = "2020-09-18 12:05:00";
@@ -91,9 +96,19 @@ namespace Authentication_Logic_Concept____Innovation_Challenge_
             }
             */
         }
-        public void initial_verification(string current_path)
+        public void initial_verification(string store_item_code)
         {
             Console.WriteLine("Initial Verification");
+            Console.WriteLine(store_item_code.Substring(store_item_code.IndexOf('|') + 1));
+            if (access_point_name == store_item_code.Substring(store_item_code.IndexOf('|') + 1))
+            {
+                Console.WriteLine("Valid");
+            }
+            else
+            {
+                Console.WriteLine("Invalid Code");
+                System.Environment.Exit(0);
+            }
         }
         public static string temp(bool test)
         {
@@ -101,3 +116,4 @@ namespace Authentication_Logic_Concept____Innovation_Challenge_
         }
     }
 }
+
