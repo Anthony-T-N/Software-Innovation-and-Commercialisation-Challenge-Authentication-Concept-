@@ -9,16 +9,23 @@ namespace Authentication_Logic_Concept____Innovation_Challenge_
         // Business key is retrieved from the business's website or locally at the store.
         string business_key = "pass";
         // Extract access point names.
-        static string access_point_name = "Business_Name";
+        static List<string> access_point_names = new List<string>()
+        {
+            "Store_Wifi_23"
+        };
+        
         // Code made up of several elements. (Date/time + access point name + part of password).
         // Ideally scrambled to avoid illegitimate modifications.
-        static string store_item_code = DateTime.Now.ToString("yyyy-MM-dd h:mm:ss tt") + "|" + access_point_name + "|" + "word";
+        static string store_item_code = DateTime.Now.ToString("yyyy-MM-dd h:mm:ss tt") + "|" + access_point_names[0] + "|" + "word";
 
         static bool verified = true;
 
         static void Main(string[] args)
         {
             Program main_program = new Program();
+
+            // Extract avaliable wifi APs and compile into a list.
+            main_program.extract_access_point_names();
 
             // Check whether the customer has purchased an item within 30mins.
             Console.WriteLine("Check Expiry");
@@ -56,15 +63,21 @@ namespace Authentication_Logic_Concept____Innovation_Challenge_
         }
         public void initial_verification(string store_item_code)
         {
-            Console.WriteLine(access_point_name + " = " + store_item_code.Substring(store_item_code.IndexOf('|') + 1, store_item_code.LastIndexOf('|') - store_item_code.IndexOf('|') - 1));
-            if (access_point_name == store_item_code.Substring(store_item_code.IndexOf('|') + 1, store_item_code.LastIndexOf('|') - store_item_code.IndexOf('|') - 1))
+            string temp = store_item_code.Substring(store_item_code.IndexOf('|') + 1, store_item_code.LastIndexOf('|') - store_item_code.IndexOf('|') - 1);
+            Console.WriteLine(temp);
+            for (int i = 0; i <= access_point_names.Count - 1; i++)
             {
-                Console.WriteLine("Valid Code");
-            }
-            else
-            {
-                Console.WriteLine("Invalid Code");
-                verified = false;
+                Console.WriteLine(access_point_names[i] + " == " + temp);
+                if (access_point_names[i] == temp)
+                {
+                    Console.WriteLine("Valid Code");
+                    verified = true;
+                }
+                else
+                {
+                    Console.WriteLine("Invalid Code");
+                    verified = false;
+                }
             }
         }
         public string extract_access_point_password(string store_item_code)
@@ -72,10 +85,13 @@ namespace Authentication_Logic_Concept____Innovation_Challenge_
             string password = (business_key + store_item_code.Substring(store_item_code.LastIndexOf('|') + 1));
             return ("Wifi password: " + password);
         }
+        public void extract_access_point_names()
+        {
+            
+        }
         public void connect_to_access_point(string password)
         {
 
         }
     }
 }
-
