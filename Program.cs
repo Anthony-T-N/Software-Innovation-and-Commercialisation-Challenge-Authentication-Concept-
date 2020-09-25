@@ -63,12 +63,12 @@ namespace Authentication_Logic_Concept____Innovation_Challenge_
         }
         public void initial_verification(string store_item_code)
         {
-            string temp = store_item_code.Substring(store_item_code.IndexOf('|') + 1, store_item_code.LastIndexOf('|') - store_item_code.IndexOf('|') - 1);
-            Console.WriteLine(temp);
+            string current_access_point = store_item_code.Substring(store_item_code.IndexOf('|') + 1, store_item_code.LastIndexOf('|') - store_item_code.IndexOf('|') - 1);
+            Console.WriteLine(current_access_point);
             for (int i = 0; i <= access_point_names.Count - 1; i++)
             {
-                Console.WriteLine(access_point_names[i] + " == " + temp);
-                if (access_point_names[i] == temp)
+                Console.WriteLine(access_point_names[i] + " == " + current_access_point);
+                if (access_point_names[i] == current_access_point)
                 {
                     Console.WriteLine("Valid Code");
                     verified = true;
