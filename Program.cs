@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using Microsoft.WindowsAPICodePack.Net;
 
 namespace Authentication_Logic_Concept____Innovation_Challenge_
 {
@@ -11,12 +12,19 @@ namespace Authentication_Logic_Concept____Innovation_Challenge_
         // Extract access point names.
         static List<string> access_point_names = new List<string>()
         {
-            "Store_Wifi_23"
+            "Free Wifi!!!123",
+            "GUEST",
+            "0khc mr23",
+            "d4gA0v",
+            "Store_Wifi_23",
+            "FREE Public WiFi",
+            "Best Wifi",
+            "EAGLE" 
         };
         
         // Code made up of several elements. (Date/time + access point name + part of password).
         // Ideally scrambled to avoid illegitimate modifications.
-        static string store_item_code = DateTime.Now.ToString("yyyy-MM-dd h:mm:ss tt") + "|" + access_point_names[0] + "|" + "word";
+        static string store_item_code = DateTime.Now.ToString("yyyy-MM-dd h:mm:ss tt") + "|" + "Store_Wifi_23" + "|" + "word";
 
         static bool verified = true;
 
@@ -33,7 +41,7 @@ namespace Authentication_Logic_Concept____Innovation_Challenge_
 
             // Verify that the item the customer purchased is from the same store providing wifi.
             Console.WriteLine("Initial Verification");
-            main_program.initial_verification(store_item_code);
+            verified = main_program.initial_verification(store_item_code);
             string final = "";
             if (verified == true)
             {
@@ -61,24 +69,20 @@ namespace Authentication_Logic_Concept____Innovation_Challenge_
                 verified = false;
             }
         }
-        public void initial_verification(string store_item_code)
+        public bool initial_verification(string store_item_code)
         {
             string current_access_point = store_item_code.Substring(store_item_code.IndexOf('|') + 1, store_item_code.LastIndexOf('|') - store_item_code.IndexOf('|') - 1);
-            Console.WriteLine(current_access_point);
             for (int i = 0; i <= access_point_names.Count - 1; i++)
             {
                 Console.WriteLine(access_point_names[i] + " == " + current_access_point);
                 if (access_point_names[i] == current_access_point)
                 {
                     Console.WriteLine("Valid Code");
-                    verified = true;
-                }
-                else
-                {
-                    Console.WriteLine("Invalid Code");
-                    verified = false;
+                    return true;
                 }
             }
+            Console.WriteLine("Invalid Code");
+            return false;
         }
         public string extract_access_point_password(string store_item_code)
         {
@@ -87,7 +91,14 @@ namespace Authentication_Logic_Concept____Innovation_Challenge_
         }
         public void extract_access_point_names()
         {
-            
+            // Credits: https://stackoverflow.com/questions/40645146/how-can-i-get-the-currently-connected-wifi-ssid-and-signal-strength-in-dotnet-co
+            // WARNING: Not cross-platform. Only avaliable on Windows. Old (2014).
+            var networks = NetworkListManager.GetNetworks(NetworkConnectivityLevels.All);
+            foreach (var network in networks)
+            {
+                var sConnected = ((network.IsConnected == true) ? " (connected)" : " (disconnected)");
+                Console.WriteLine("Network : " + network.Name + " - Category : " + network.Category.ToString() + sConnected);
+            }
         }
         public void connect_to_access_point(string password)
         {
