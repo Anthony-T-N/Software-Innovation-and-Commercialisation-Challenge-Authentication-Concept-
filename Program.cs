@@ -16,10 +16,10 @@ namespace Authentication_Logic_Concept____Innovation_Challenge_
             "GUEST",
             "0khc mr23",
             "d4gA0v",
-            "Store_Wifi_23",
             "FREE Public WiFi",
             "Best Wifi",
-            "EAGLE" 
+            "EAGLE",
+            "Store_Wifi_23"
         };
         
         // Code made up of several elements. (Date/time + access point name + part of password).
@@ -56,6 +56,10 @@ namespace Authentication_Logic_Concept____Innovation_Challenge_
             }
             // Use newly acquired password to access store's access point without the need for the user to enter manually.
             main_program.connect_to_access_point(final);
+
+            Console.WriteLine("Completed - Confirm ?");
+            string nil = Console.ReadLine();
+
         }
         public void check_expiry(string store_item_code)
         {
@@ -74,10 +78,11 @@ namespace Authentication_Logic_Concept____Innovation_Challenge_
             string current_access_point = store_item_code.Substring(store_item_code.IndexOf('|') + 1, store_item_code.LastIndexOf('|') - store_item_code.IndexOf('|') - 1);
             for (int i = 0; i <= access_point_names.Count - 1; i++)
             {
-                Console.WriteLine(access_point_names[i] + " == " + current_access_point);
+                Console.WriteLine("[-] " + access_point_names[i] + " || " + current_access_point);
                 if (access_point_names[i] == current_access_point)
                 {
                     Console.WriteLine("Valid Code");
+                    Console.WriteLine(access_point_names[i] + " == " + current_access_point);
                     return true;
                 }
             }
@@ -98,6 +103,7 @@ namespace Authentication_Logic_Concept____Innovation_Challenge_
             {
                 var sConnected = ((network.IsConnected == true) ? " (connected)" : " (disconnected)");
                 Console.WriteLine("Network : " + network.Name + " - Category : " + network.Category.ToString() + sConnected);
+                access_point_names.Add(network.Name);
             }
         }
         public void connect_to_access_point(string password)
