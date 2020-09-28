@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using Microsoft.WindowsAPICodePack.Net;
+using Windows.Devices.WiFi;
 
 namespace Authentication_Logic_Concept____Innovation_Challenge_
 {
@@ -19,7 +20,7 @@ namespace Authentication_Logic_Concept____Innovation_Challenge_
             "FREE Public WiFi",
             "Best Wifi",
             "EAGLE",
-            "Store_Wifi_23"
+            "Store_Wifi_231"
         };
         
         // Code made up of several elements. (Date/time + access point name + part of password).
@@ -33,29 +34,36 @@ namespace Authentication_Logic_Concept____Innovation_Challenge_
             Program main_program = new Program();
 
             // Extract avaliable wifi APs and compile into a list.
+            Console.WriteLine("Scan avaliable wireless access points and add to list");
             main_program.extract_access_point_names();
+            Console.WriteLine(" ");
+
+            // Delete afterwards (Testing purposes).
+            access_point_names.Add("Store_Wifi_23");
 
             // Check whether the customer has purchased an item within 30mins.
             Console.WriteLine("Check Expiry");
             main_program.check_expiry(store_item_code);
+            Console.WriteLine(" ");
 
             // Verify that the item the customer purchased is from the same store providing wifi.
             Console.WriteLine("Initial Verification");
             verified = main_program.initial_verification(store_item_code);
-            string final = "";
+            Console.WriteLine(" ");
+            string extracted_password = "";
             if (verified == true)
             {
                 // Once all steps have been verified, access point password is extracted.
                 Console.WriteLine("Extract access point password");
-                final = main_program.extract_access_point_password(store_item_code);
-                Console.WriteLine(final);
+                extracted_password = main_program.extract_access_point_password(store_item_code);
+                Console.WriteLine(extracted_password);
             }
             else
             {
                 System.Environment.Exit(0);
             }
             // Use newly acquired password to access store's access point without the need for the user to enter manually.
-            main_program.connect_to_access_point(final);
+            main_program.connect_to_access_point(extracted_password);
 
             Console.WriteLine("Completed - Confirm ?");
             string nil = Console.ReadLine();
@@ -65,11 +73,12 @@ namespace Authentication_Logic_Concept____Innovation_Challenge_
         {
             if ((DateTime.Now - DateTime.Parse(store_item_code.Remove(store_item_code.IndexOf('|')))).TotalMinutes <= 30)
             {
+                Console.WriteLine(DateTime.Now);
                 Console.WriteLine("Valid Expiry");
             }
             else
             {
-                Console.WriteLine("Invalid Code");
+                Console.WriteLine("Invalid Expiry");
                 verified = false;
             }
         }
@@ -94,8 +103,9 @@ namespace Authentication_Logic_Concept____Innovation_Challenge_
             string password = (business_key + store_item_code.Substring(store_item_code.LastIndexOf('|') + 1));
             return ("Wifi password: " + password);
         }
-        public void extract_access_point_names()
+        public async void extract_access_point_names()
         {
+            /*
             // Credits: https://stackoverflow.com/questions/40645146/how-can-i-get-the-currently-connected-wifi-ssid-and-signal-strength-in-dotnet-co
             // WARNING: Not cross-platform. Only avaliable on Windows. Old (2014).
             var networks = NetworkListManager.GetNetworks(NetworkConnectivityLevels.All);
@@ -104,6 +114,17 @@ namespace Authentication_Logic_Concept____Innovation_Challenge_
                 var sConnected = ((network.IsConnected == true) ? " (connected)" : " (disconnected)");
                 Console.WriteLine("Network : " + network.Name + " - Category : " + network.Category.ToString() + sConnected);
                 access_point_names.Add(network.Name);
+            }
+            */
+            // Credits: https://stackoverflow.com/questions/496568/how-do-i-get-the-available-wifi-aps-and-their-signal-strength-in-net?rq=1
+            var adapters = await WiFiAdapter.FindAllAdaptersAsync();
+            foreach (var adapter in adapters)
+            {
+                foreach (var network in adapter.NetworkReport.AvailableNetworks)
+                {
+                    Console.WriteLine($"ssid: {network.Ssid}" + " | " + $"signal strength: {network.SignalBars}");
+                    access_point_names.Add(network.Ssid);
+                }
             }
         }
         public void connect_to_access_point(string password)
