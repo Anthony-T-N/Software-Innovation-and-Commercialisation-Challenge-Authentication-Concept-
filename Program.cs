@@ -1,7 +1,9 @@
 using System;
+using System.Net.Http;
 using System.Collections.Generic;
 using Microsoft.WindowsAPICodePack.Net;
 using Windows.Devices.WiFi;
+using System.Threading.Tasks;
 
 namespace Authentication_Logic_Concept____Innovation_Challenge_
 {
@@ -9,7 +11,7 @@ namespace Authentication_Logic_Concept____Innovation_Challenge_
     {
         // Global Variables:
         // Business key is retrieved from the business's website or locally at the store.
-        string business_key = "pass";
+        static string business_key = "pass";
         // Extract access point names.
         static List<string> access_point_names = new List<string>()
         {
@@ -25,7 +27,7 @@ namespace Authentication_Logic_Concept____Innovation_Challenge_
         
         // Code made up of several elements. (Date/time + access point name + part of password).
         // Ideally scrambled to avoid illegitimate modifications.
-        static string store_item_code = DateTime.Now.ToString("yyyy-MM-dd h:mm:ss tt") + "|" + "Store_Wifi_23" + "|" + "word";
+        static string store_item_code = DateTime.Now.ToString("yyyy-MM-dd h:mm:ss tt") + "|" + "Store_Wifi_23" + "|" + " password";
 
         static bool verified = true;
 
@@ -35,7 +37,8 @@ namespace Authentication_Logic_Concept____Innovation_Challenge_
 
             // Extract avaliable wifi APs and compile into a list.
             Console.WriteLine("Scan avaliable wireless access points and add to list");
-            main_program.extract_access_point_names();
+            var ap_extraction_task = main_program.extract_access_point_names();
+            ap_extraction_task.Wait();
             Console.WriteLine(" ");
 
             // Delete afterwards (Testing purposes).
@@ -53,6 +56,10 @@ namespace Authentication_Logic_Concept____Innovation_Challenge_
             string extracted_password = "";
             if (verified == true)
             {
+                Console.WriteLine("Getting part of password");
+                var task = main_program.get_text();
+                task.Wait();
+                Console.WriteLine(" ");
                 // Once all steps have been verified, access point password is extracted.
                 Console.WriteLine("Extract access point password");
                 extracted_password = main_program.extract_access_point_password(store_item_code);
@@ -65,6 +72,7 @@ namespace Authentication_Logic_Concept____Innovation_Challenge_
             // Use newly acquired password to access store's access point without the need for the user to enter manually.
             main_program.connect_to_access_point(extracted_password);
 
+            // Delete next two lines.
             Console.WriteLine("Completed - Confirm ?");
             string nil = Console.ReadLine();
 
@@ -103,7 +111,7 @@ namespace Authentication_Logic_Concept____Innovation_Challenge_
             string password = (business_key + store_item_code.Substring(store_item_code.LastIndexOf('|') + 1));
             return ("Wifi password: " + password);
         }
-        public async void extract_access_point_names()
+        public async Task extract_access_point_names()
         {
             /*
             // Credits: https://stackoverflow.com/questions/40645146/how-can-i-get-the-currently-connected-wifi-ssid-and-signal-strength-in-dotnet-co
@@ -130,6 +138,14 @@ namespace Authentication_Logic_Concept____Innovation_Challenge_
         public void connect_to_access_point(string password)
         {
 
+        }
+        public async Task get_text()
+        {
+            HttpClient client = new HttpClient();
+            string s = await client.GetStringAsync("https://example.com/");
+            s = s.Substring(s.IndexOf("<title>") + "<title>".Length, s.IndexOf("</title>") - s.IndexOf("<title>") - "<title>".Length);
+            Console.WriteLine(s.Substring(0, 7));
+            business_key = s.Substring(0, 7);
         }
     }
 }
