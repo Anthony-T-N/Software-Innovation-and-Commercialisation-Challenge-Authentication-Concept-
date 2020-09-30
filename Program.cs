@@ -35,35 +35,53 @@ namespace Authentication_Logic_Concept____Innovation_Challenge_
         {
             Program main_program = new Program();
 
+            Console.WriteLine("=========================================================================");
+            Console.WriteLine("Step 0): Read barcode/QR details to extract store item code");
+            Console.WriteLine(store_item_code);
+            Console.WriteLine("=========================================================================");
+            Console.WriteLine(" ");
+
             // Extract avaliable wifi APs and compile into a list.
-            Console.WriteLine("Scan avaliable wireless access points and add to list");
+            Console.WriteLine("=========================================================================");
+            Console.WriteLine("Step 1): Scan avaliable wireless access points and add to list");
             var ap_extraction_task = main_program.extract_access_point_names();
             ap_extraction_task.Wait();
+            Console.WriteLine("=========================================================================");
             Console.WriteLine(" ");
 
             // Delete afterwards (Testing purposes).
             access_point_names.Add("Store_Wifi_23");
 
             // Check whether the customer has purchased an item within 30mins.
-            Console.WriteLine("Check Expiry");
+            Console.WriteLine("=========================================================================");
+            Console.WriteLine("Step 2): Check Expiry of item brought");
             main_program.check_expiry(store_item_code);
+            Console.WriteLine("=========================================================================");
             Console.WriteLine(" ");
 
             // Verify that the item the customer purchased is from the same store providing wifi.
-            Console.WriteLine("Initial Verification");
+            Console.WriteLine("=========================================================================");
+            Console.WriteLine("Step 3): Initial Verification (Loop through wifi list to find a match)");
             verified = main_program.initial_verification(store_item_code);
+            Console.WriteLine("=========================================================================");
             Console.WriteLine(" ");
+
             string extracted_password = "";
             if (verified == true)
             {
-                Console.WriteLine("Getting part of password");
+                Console.WriteLine("=========================================================================");
+                Console.WriteLine("Step 4): Getting 1st part of password from a website");
                 var task = main_program.get_text();
                 task.Wait();
+                Console.WriteLine("=========================================================================");
                 Console.WriteLine(" ");
+
                 // Once all steps have been verified, access point password is extracted.
-                Console.WriteLine("Extract access point password");
+                Console.WriteLine("=========================================================================");
+                Console.WriteLine("Step 5): Extract access point password from store_item_code");
                 extracted_password = main_program.extract_access_point_password(store_item_code);
                 Console.WriteLine(extracted_password);
+                Console.WriteLine("=========================================================================");
             }
             else
             {
