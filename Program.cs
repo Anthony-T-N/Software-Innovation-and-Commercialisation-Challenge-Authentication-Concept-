@@ -1,7 +1,7 @@
 using System;
 using System.Net.Http;
 using System.Collections.Generic;
-using Microsoft.WindowsAPICodePack.Net;
+// using Microsoft.WindowsAPICodePack.Net;
 using Windows.Devices.WiFi;
 using System.Threading.Tasks;
 
@@ -11,7 +11,7 @@ namespace Authentication_Logic_Concept____Innovation_Challenge_
     {
         // Global Variables:
         // Business key is retrieved from the business's website or locally at the store.
-        static string business_key = "pass";
+        static string business_key = "";
         // Extract access point names.
         static List<string> access_point_names = new List<string>()
         {
@@ -71,8 +71,9 @@ namespace Authentication_Logic_Concept____Innovation_Challenge_
             {
                 Console.WriteLine("=========================================================================");
                 Console.WriteLine("Step 4): Getting 1st part of password from a website");
-                var task = main_program.get_text();
+                var task = main_program.extract_website_password();
                 task.Wait();
+                Console.WriteLine(business_key);
                 Console.WriteLine("=========================================================================");
                 Console.WriteLine(" ");
 
@@ -113,15 +114,15 @@ namespace Authentication_Logic_Concept____Innovation_Challenge_
             string current_access_point = store_item_code.Substring(store_item_code.IndexOf('|') + 1, store_item_code.LastIndexOf('|') - store_item_code.IndexOf('|') - 1);
             for (int i = 0; i <= access_point_names.Count - 1; i++)
             {
-                Console.WriteLine("[-] " + access_point_names[i] + " || " + current_access_point);
                 if (access_point_names[i] == current_access_point)
                 {
-                    Console.WriteLine("Valid Code");
-                    Console.WriteLine(access_point_names[i] + " == " + current_access_point);
+                    Console.WriteLine("[+] " + access_point_names[i] + " == " + current_access_point);
+                    Console.WriteLine("Valid Access Point");
                     return true;
                 }
+                Console.WriteLine("[-] " + access_point_names[i] + " || " + current_access_point);
             }
-            Console.WriteLine("Invalid Code");
+            Console.WriteLine("Invalid Access Point");
             return false;
         }
         public string extract_access_point_password(string store_item_code)
@@ -157,12 +158,11 @@ namespace Authentication_Logic_Concept____Innovation_Challenge_
         {
 
         }
-        public async Task get_text()
+        public async Task extract_website_password()
         {
             HttpClient client = new HttpClient();
             string s = await client.GetStringAsync("https://example.com/");
             s = s.Substring(s.IndexOf("<title>") + "<title>".Length, s.IndexOf("</title>") - s.IndexOf("<title>") - "<title>".Length);
-            Console.WriteLine(s.Substring(0, 7));
             business_key = s.Substring(0, 7);
         }
     }
