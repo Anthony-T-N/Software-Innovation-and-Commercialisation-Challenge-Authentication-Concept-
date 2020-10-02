@@ -5,3 +5,7 @@
 ![support](https://img.shields.io/badge/OS-Linux-orange.svg)
 
 # Software Innovation and Commercialisation Challenge (Authentication Concept)
+
+Overview
+-
+Proof of concept to authenticate and access a business's access point automatically without user input.
